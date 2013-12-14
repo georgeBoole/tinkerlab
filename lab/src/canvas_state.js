@@ -1,10 +1,9 @@
 function CanvasState(canvas) {
     this.canvas = canvas;
+    this.bgcolor = "#000000";
     this.width = canvas.width;
     this.height = canvas.height;
     this.ctx = canvas.getContext('2d');
-
-    this.valid = false; //When false redraw canvas
     this.shapes = []; //Collection of shapes to be drawn
     this.dragging = false;
     this.selection = null;
@@ -17,7 +16,6 @@ function CanvasState(canvas) {
 
 CanvasState.prototype.addShape = function(shape) {
   this.shapes.push(shape);
-  this.valid = false;
 }
 
 CanvasState.prototype.clear = function() {
@@ -43,6 +41,8 @@ CanvasState.prototype.draw = function() {
   this.clear();
   
   // ** Add stuff you want drawn in the background all the time here **
+  ctx.fillStyle = this.bgcolor;
+  ctx.fillRect(0, 0, this.width, this.height);
   
   // draw all shapes
   var l = shapes.length;
@@ -56,5 +56,4 @@ CanvasState.prototype.draw = function() {
   
   // ** Add stuff you want drawn on top all the time here **
   
-  this.valid = true;
 }

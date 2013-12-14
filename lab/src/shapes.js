@@ -3,35 +3,66 @@ function RGBA(color) {
     return 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + color[3] + ')';
 }
 
-function Shape(x,y,w,h,color) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.w = w || 1;
-    this.h = h || 1;
+function LineSegment(x,y) {
+    this.x = x;
+    this.y = y;
+}
+
+LineSegment.prototype.draw = function(ctx) {
+    
+}
+
+LineSegment.prototype.update = function(dt) {
+
+}
+
+
+var Rectangle = new LineSegment(color,w,h) {
+    this.w = w;
+    this.h = h;
     this.color = typeof color == "string" ? color : RGBA(color);
 }
 
-Shape.prototype.draw = function(ctx) {
+Rectangle.prototype.draw = function(ctx) {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
 }
 
-Shape.prototype.update = function(dt) {
+Rectangle.prototype.update = function(dt) {
 
 }
 
-Shape.prototype.contains = function(mx,my) {
+Rectangle.prototype.contains = function(mx,my) {
     return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my) && (this.y + this.h >= my);
 }
 
-function Sprite(x,y,vx,vy,w,h,color) {
-    this.x = x;
-    this.y = y;
+
+var Triangle = new Rectangle(p1x,p1y,p2x,p2y) {
+    this.p1x = p1x;
+    this.p1y = p1y;
+    this.p2x = p2x;
+    this.p2y = p2y;
+    // this.p3x = p3x;
+    // this.p3y = p3y;
+}
+
+Triangle.prototype.draw = function(ctx) {
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.moveTo(this.p1x,this.p1y);
+    ctx.lineTo(this.p2x,this.p2y);
+    //ctx.lineTo(this.p3x,this.p3y);
+    ctx.closePath();
+    ctx.fill();
+}
+
+Triangle.prototype.update = function(dt) {
+
+}
+
+var Sprite = new Rectangle(x,y,vx,vy,w,h,color) {
     this.vx = vx;
     this.vy = vy;
-    this.w = w;
-    this.h = h;
-    this.color = color || '#AAAAAA';
 }
 
 Sprite.prototype.draw = function(ctx) {
@@ -70,6 +101,10 @@ Path.prototype.draw = function(ctx) {
 Path.prototype.contains = function(mx,my) {
     return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my) && (this.y + this.h >= my);
 }
+
+
+
+// Need work here still
 
 function GrowingCircle(x,y,size1,size2,fill,animTime,loop) {
    this.x = x;
@@ -122,5 +157,5 @@ Bezier.prototype.draw = function(ctx) {
 }
 
 Bezier.prototype.update = function(dt) {
-    
+
 }

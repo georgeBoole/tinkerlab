@@ -29,17 +29,43 @@ function Circle(x,y,r,color) {
     this.y = y || 0;
     this.w = 2 * r;
     this.h = 2 * r;
+    this.r = r;
     this.color = typeof color == "string" ? color : RGBA(color);
 }
 
 Circle.prototype.draw = function(ctx) {
-    ctx.fillStyle = this.fill;
     ctx.beginPath();
-    ctx.arc(this.x,this.y,this.radius,0,2 * Math.PI);
-    ctx.closePath();
+    ctx.fillStyle = this.fill;
+    ctx.arc(this.x,this.y,this.r,0,2 * Math.PI);
     ctx.fill();
 }
 
 Circle.prototype.update = function(dt) {
+
+}
+
+function Triangle(ax, ay, bx, by, cx, cy, color) {
+    this.x = Math.min(ax, bx, cx);
+    this.y = Math.min(ay, by, cy);
+    this.ax = ax;
+    this.ay = ay;
+    this.bx = bx;
+    this.by = by;
+    this.cx = cx;
+    this.cy = cy;
+    this.color = color;
+}
+
+Triangle.prototype.draw = function(ctx) {
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.moveTo(this.ax,this.ay);
+    ctx.lineTo(this.bx,this.by);
+    ctx.lineTo(this.cx,this.cy);
+    ctx.closePath();
+    ctx.fill();
+}
+
+Triangle.prototype.update = function(dt) {
 
 }

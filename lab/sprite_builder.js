@@ -22,10 +22,15 @@ init();
 function init() {
     var s = new CanvasState(document.getElementById('canvas'));
     window.canvasState = s;
+    window.shapes = s.shapes;
 
     var cvs = s.canvas;
     cvs.addEventListener('dblclick', function(e) {
-      var mouse = myState.getMouse(e);
+      var mouse = {x:e['offsetX'], y:e['offsetY']};
+      console.log('got mouse:');
+      console.log(mouse);
+      console.log('event');
+      console.log(e);
       var color = 'rgba(32, 32, 128, 0.6)';
       var shape = undefined;
       if (gui_state['brush'] == 'rectangle') {
@@ -66,20 +71,12 @@ function init_gui() {
 
 	// display the sprite creation management panel
 	var sprite_builder = new dat.GUI();
-	var sprite = new SpriteBuild();
-	sprite_builder.add(sprite, 'name');
+	sprite_builder.add(sprite_build, 'name');
 	sprite_builder.add(gui_state, 'brush', {'Triangle':'triangle', 'Rectangle':'rectangle', 'Circle':'circle'}).name('Brush');
-
-	cvs.addEventListener('dblclick', function(e) {
-      var mouse = myState.getMouse(e);
-      s.addShape(new )
-      //myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, 20, 20, 'rgba(0,255,0,.6)'));
-    }, true);
 
 }
 
 window.onload = function() {
 	init_gui();
-	init_input();
 };
 

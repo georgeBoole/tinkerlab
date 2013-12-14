@@ -93,7 +93,8 @@ GrowingCircle.prototype.draw = function(ctx) {
     ctx.beginPath();
     ctx.fillStyle = this.fill;
     ctx.arc(this.x,this.y,this.radius,0,2 * Math.PI);
-    ctx.stroke();
+    ctx.closePath();
+    ctx.fill();
 }
 
 GrowingCircle.prototype.update = function(dt) {

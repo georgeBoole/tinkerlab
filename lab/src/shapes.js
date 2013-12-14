@@ -70,3 +70,35 @@ Path.prototype.draw = function(ctx) {
 Path.prototype.contains = function(mx,my) {
     return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my) && (this.y + this.h >= my);
 }
+
+function GrowingCircle(x,y,size1,size2,fill,animTime,loop) {
+   this.x = x;
+   this.y = y;
+   this.size1 = size1;
+   this.size2 = size2;
+   this.fill = fill;
+   this.animTime  = animTime;
+   this.rate = (size2-size1)/animTime;
+   this.lapsed = 0;
+   this.loop = loop || false;
+}
+
+Object.defineProperty(GrowingCircle.prototype, 'radius', {
+    get: function() {
+        return this.size1 + (((this.size2-this.size1)/this.animTime) * (this.lapsed % this.animTime)); 
+    }
+});
+
+GrowingCircle.prototype.draw = function(ctx) {
+    ctx.beginPath();
+    ctx.fillStyle = this.fill;
+    ctx.arc(this.x,this.y,this.radius,0,2 * Math.PI);
+    ctx.stroke();
+}
+
+GrowingCircle.prototype.update = function(dt) {
+    this.lapsed += dt;
+    if (!this.loop) {
+        this.lapsed = Math.min(this.animTime, this.lapsed);
+    }
+}

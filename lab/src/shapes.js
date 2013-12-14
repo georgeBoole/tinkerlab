@@ -103,3 +103,24 @@ GrowingCircle.prototype.update = function(dt) {
         this.lapsed = Math.min(this.animTime, this.lapsed);
     }
 }
+
+function Bezier(x1,y1,cx1,cy1,cx2,cy2,x2,y2,fill) {
+    this.x1 = x1;
+    this.x2 = x2;
+    this.cx1 = cx1;
+    this.cy1 = cy1;
+    this.cx2 = cx2;
+    this.cy2 = cy2;
+    this.fill = fill;
+}
+
+Bezier.prototype.draw = function(ctx) {
+    ctx.beginPath();
+    ctx.strokeStyle('red');
+    ctx.moveTo(x1,y1);
+    ctx.bezierCurveTo(this.cx1,this.cy1,this.cx2,this.cy2,this.x2,this.y2)
+}
+
+Bezier.prototype.update = function(dt) {
+    
+}

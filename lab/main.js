@@ -15,6 +15,7 @@ function init() {
     active_sprite.y = (s.height - active_sprite.h) / 2;
     s.addShape(active_sprite);
     s.addShape(GC);
+    s.addShape(bez);
 }
 
 function refresh() {

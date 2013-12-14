@@ -86,5 +86,23 @@ Triangle.prototype.contains = function(x, y) {
     b2 = sign(pt, v2, v3) < 0.0;
     b3 = sign(pt, v3, v1) < 0.0;
     return ((b1 == b2) && (b2 == b3));
+}
 
+function QuadCurve(x,y,cp1x,cp1y,cp2x,cp2y,color) {
+    this.x = x;
+    this.y = y;
+    this.cp1x = cp1x;
+    this.cp1y = cp1y;
+    this.cp2x = cp2x;
+    this.cp2y = cp2y;
+    this.color = color;
+}
+QuadCurve.prototype.draw = function(ctx) {
+    ctx.strokeStyle = this.color;
+    ctx.moveTo(x,y);
+    ctx.quadraticCurveTo(cp1x,cp1y,cp2x,cp2y);
+    ctx.stroke();
+}
+QuadCurve.prototype.update = function(dt) {
+    
 }

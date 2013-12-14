@@ -12,7 +12,6 @@ function Shape(x,y,w,h,color) {
 }
 
 Shape.prototype.draw = function(ctx) {
-    console.log(this);
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
 }

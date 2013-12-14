@@ -1,5 +1,3 @@
-
-
 var initial_width = 40;
 var initial_height = 40;
 var r = 128, g = 128, b = 32, a = 0.9;

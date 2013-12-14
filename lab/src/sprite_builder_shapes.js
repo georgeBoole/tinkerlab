@@ -69,3 +69,22 @@ Triangle.prototype.draw = function(ctx) {
 Triangle.prototype.update = function(dt) {
 
 }
+
+function QuadCurve(x,y,cp1x,cp1y,cp2x,cp2y,color) {
+    this.x = x;
+    this.y = y;
+    this.cp1x = cp1x;
+    this.cp1y = cp1y;
+    this.cp2x = cp2x;
+    this.cp2y = cp2y;
+    this.color = color;
+}
+QuadCurve.prototype.draw = function(ctx) {
+    ctx.strokeStyle = this.color;
+    ctx.moveTo(x,y);
+    ctx.quadraticCurveTo(cp1x,cp1y,cp2x,cp2y);
+    ctx.stroke();
+}
+QuadCurve.prototype.update = function(dt) {
+    
+}

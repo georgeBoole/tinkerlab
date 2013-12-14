@@ -125,8 +125,12 @@ window.onload = function() {
   var gui = new dat.GUI();
   var my_shape = controlled_shape;
   var cs = window.canvasState;
-  gui.add(my_shape, 'x').listen();
-  gui.add(my_shape, 'y').listen();
+  gui.add(my_shape, 'x').onFinishChange(function(newValue) {
+    refresh();
+  });
+  gui.add(my_shape, 'y').onFinishChange(function(newValue) {
+    refresh();
+  });
   gui.add(my_shape, 'w').onFinishChange(function(newValue) {
     refresh();
   });

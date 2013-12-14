@@ -44,6 +44,10 @@ Circle.prototype.update = function(dt) {
 
 }
 
+Circle.prototype.contains = function(px, py) {
+    return (Math.pow((px - this.x), 2) + Math.pow((py - this.y), 2)) <= this.r * this.r;
+}
+
 function Triangle(ax, ay, bx, by, cx, cy, color) {
     this.x = Math.min(ax, bx, cx);
     this.y = Math.min(ay, by, cy);
@@ -67,5 +71,20 @@ Triangle.prototype.draw = function(ctx) {
 }
 
 Triangle.prototype.update = function(dt) {
+
+}
+
+Triangle.prototype.contains = function(x, y) {
+    var pt = {'x':x, 'y':y};
+    var v1 = {'x':this.ax, 'y':this.ay}, v2 = {'x':this.bx, 'y':this.by}, v3 = {'x':this.cx, 'y':this.cy};
+
+    var sign = function(p1, p2, p3) {
+        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+    };
+    var b1, b2, b3;
+    b1 = sign(pt, v1, v2) < 0.0;
+    b2 = sign(pt, v2, v3) < 0.0;
+    b3 = sign(pt, v3, v1) < 0.0;
+    return ((b1 == b2) && (b2 == b3));
 
 }

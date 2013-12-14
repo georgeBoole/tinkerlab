@@ -55,6 +55,14 @@ CanvasState.prototype.draw = function() {
     shapes[i].draw(ctx);
   }
   
+  // draw selection
+  // right now this is just a stroke along the edge of the selected Shape
+  if (this.selection != null) {
+    ctx.strokeStyle = this.selectionColor;
+    ctx.lineWidth = this.selectionWidth;
+    var mySel = this.selection;
+    ctx.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
+  }
   // ** Add stuff you want drawn on top all the time here **
   
 }

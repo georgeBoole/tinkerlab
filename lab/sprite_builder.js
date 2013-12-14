@@ -23,28 +23,6 @@ function init() {
     var s = new CanvasState(document.getElementById('canvas'));
     window.canvasState = s;
     window.shapes = s.shapes;
-
-    var cvs = s.canvas;
-    cvs.addEventListener('dblclick', function(e) {
-      var mouse = {x:e['offsetX'], y:e['offsetY']};
-      var col = function() { return String(Math.floor(Math.random() * 255)); };
-      var color = 'rgba(' + col() + ',' + col() + ',' + col() + ', ' + String(.70 + .30 * Math.random()) + ')';
-      console.log(color);
-      var shape = undefined;
-      if (gui_state['brush'] == 'rectangle') {
-      	shape = new Rect(mouse.x - 40, mouse.y - 40, 80, 80, color);
-      }
-      else if (gui_state['brush'] == 'triangle') {
-        shape = new Triangle(mouse.x - 40, mouse.y, mouse.x + 40, mouse.y, mouse.x, mouse.y + 55, color);
-      }
-      else if (gui_state['brush'] == 'circle') {
-      	shape = new Circle(mouse.x, mouse.y, 30, color);
-      }
-      if (shape != undefined) {
-      	s.addShape(shape);
-      }
-    }, true);
-    
     
 }
 
@@ -70,9 +48,72 @@ function init_gui() {
 	sprite_builder.add(sprite_build, 'name');
 	sprite_builder.add(gui_state, 'brush', {'Triangle':'triangle', 'Rectangle':'rectangle', 'Circle':'circle'}).name('Brush');
 
+	return sprite_builder;
+}
+
+function init_input(sprite_builder_gui) {
+	var myState = window.canvasState;
+	var canvas = myState.canvas;
+	canvas.addEventListener('selectstart', function(e) {e.preventDefault(); return false;}, false);
+	canvas.addEventListener('mousedown', function(e) {
+		var mouse = { x: e.offsetX, y: e.offsetY };
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = myState.shapes;
+		for(var i = 0; i < shapes.length; i++) {
+			if(shapes[i].contains(mx,my)) {
+				var mySel = shapes[i];
+				//Make sure we're grabbing it at the right spot
+				myState.dragoffx = mx - mySel.x;
+				myState.dragoffy = my - mySel.y;
+				myState.dragging = true;
+				myState.selection = mySel;
+				console.log('selected stuff');
+				return;
+			}
+		}
+		// havent returned means we have failed to select anything.
+		// If there was an object selected, we deselect it
+		if (myState.selection) {
+			myState.selection = null;
+		}
+	}, true);
+
+	var cvs = myState.canvas;
+    cvs.addEventListener('dblclick', function(e) {
+      var mouse = {x:e['offsetX'], y:e['offsetY']};
+      var col = function() { return String(Math.floor(Math.random() * 255)); };
+      var color = 'rgba(' + col() + ',' + col() + ',' + col() + ', ' + String(.70 + .30 * Math.random()) + ')';
+      console.log(color);
+      var shape = undefined;
+      if (gui_state['brush'] == 'rectangle') {
+      	shape = new Rect(mouse.x - 40, mouse.y - 40, 80, 80, color);
+      }
+      else if (gui_state['brush'] == 'triangle') {
+        shape = new Triangle(mouse.x - 40, mouse.y, mouse.x + 40, mouse.y, mouse.x, mouse.y + 55, color);
+      }
+      else if (gui_state['brush'] == 'circle') {
+      	shape = new Circle(mouse.x, mouse.y, 30, color);
+      }
+      if (shape != undefined) {
+      	myState.addShape(shape);
+      }
+    }, true);
+    var state_map = {91:'triangle', 93:'rectangle', 92:'circle'};
+    window.addEventListener('keypress', function(e) {
+    	keycode = e.which;
+    	if (keycode in state_map) {
+    		gui_state['brush'] = state_map[keycode];
+    		for (var i in sprite_builder_gui.__controllers) {
+    			sprite_builder_gui.__controllers[i].updateDisplay();
+    		}
+    		console.log('Changed brush to ' + state_map[keycode]);
+    	}
+    });
 }
 
 window.onload = function() {
-	init_gui();
+	sprite_builder_gui = init_gui();
+	init_input(sprite_builder_gui);
 };
 

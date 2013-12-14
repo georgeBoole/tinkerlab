@@ -17,38 +17,56 @@ Shape.prototype.draw = function(ctx) {
 }
 
 Shape.prototype.update = function(dt) {
-  
+
 }
 
 Shape.prototype.contains = function(mx,my) {
-  return (this.x <= mx) && (this.x + this.w >= mx) &&
-  (this.y <= my) && (this.y + this.h >= my);
+    return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my) && (this.y + this.h >= my);
+}
+
+function Sprite(x,y,vx,vy,w,h,color) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.w = w;
+    this.h = h;
+    this.color = color || '#AAAAAA';
+}
+
+Sprite.prototype.draw = function(ctx) {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.w, this.h);
+}
+
+Sprite.prototype.update = function(dt) {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
 }
 
 function Path(x,y,pointList,fill,lineWidth) {
-  this.x = x || 0;
-  this.y = y || 0;
-  this.pointList = pointList || [{x:100,y:100},{x:200,y:200}];
-  this.fill = fill || '#AAAAAA';
-  this.lineWidth = lineWidth || "5";
+    this.x = x || 0;
+    this.y = y || 0;
+    this.pointList = pointList || [{x:100,y:100},{x:200,y:200}];
+    this.fill = fill || '#AAAAAA';
+    this.lineWidth = lineWidth || "5";
 }
 
 Path.prototype.draw = function(ctx) {
-  ctx.beginPath();
-  ctx.lineWidth = this.lineWidth;
-  ctx.strokeStyle = this.fill;
-  ctx.moveTo(this.x,this.y);
-  for(var i = 0; i < this.pointList.length; i++) {
-    var point = this.pointList[i];
-    var px = point.x;
-    var py = point.y;
-    ctx.lineTo(px,py);
-  }
-  ctx.closePath();
-  ctx.stroke();
+    ctx.beginPath();
+    ctx.lineWidth = this.lineWidth;
+    ctx.strokeStyle = this.fill;
+    ctx.moveTo(this.x,this.y);
+    for(var i = 0; i < this.pointList.length; i++) {
+        var point = this.pointList[i];
+        var px = point.x;
+        var py = point.y;
+        ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    ctx.stroke();
 }
 
 Path.prototype.contains = function(mx,my) {
-  return (this.x <= mx) && (this.x + this.w >= mx) &&
-  (this.y <= my) && (this.y + this.h >= my);
+    return (this.x <= mx) && (this.x + this.w >= mx) && (this.y <= my) && (this.y + this.h >= my);
 }

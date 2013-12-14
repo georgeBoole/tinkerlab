@@ -10,7 +10,7 @@ function CanvasState(canvas) {
     this.selection = null;
     this.dragoffx = 0;
     this.dragoffy = 0;
-
+    this.last_update = Date.now();
     var myState = this;
     setInterval(function() { myState.update(); myState.draw(); }, myState.interval);
 }
@@ -26,9 +26,12 @@ CanvasState.prototype.clear = function() {
 
 CanvasState.prototype.update = function() {
   var now = Date.now();
-  var dt = now - this.last_update; //milliseconds since last update
-  for (var i = 0; i < this.shapes.length; i++) {
+  var dt = (now - this.last_update) / 1000; //seconds since last update
+  var shapes = this.shapes;
+  for (var i = 0; i < shapes.length; i++) {
     shapes[i].update(dt);
+    shapes[i].x = shapes[i].x % this.width;
+    shapes[i].y = shapes[i].y % this.height;
   }
   this.last_update = now;
 }

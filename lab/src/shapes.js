@@ -16,6 +16,10 @@ Shape.prototype.draw = function(ctx) {
     ctx.fillRect(this.x, this.y, this.w, this.h);
 }
 
+Shape.prototype.update = function(dt) {
+  
+}
+
 Shape.prototype.contains = function(mx,my) {
   return (this.x <= mx) && (this.x + this.w >= mx) &&
   (this.y <= my) && (this.y + this.h >= my);

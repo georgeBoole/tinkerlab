@@ -12,7 +12,7 @@ function CanvasState(canvas) {
     this.dragoffy = 0;
 
     var myState = this;
-    setInterval(function() { myState.draw(); }, myState.interval);
+    setInterval(function() { myState.update(); myState.draw(); }, myState.interval);
 }
 
 CanvasState.prototype.addShape = function(shape) {
@@ -24,27 +24,34 @@ CanvasState.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
+CanvasState.prototype.update = function() {
+  var now = Date.now();
+  var dt = now - this.last_update; //milliseconds since last update
+  for (var i = 0; i < this.shapes.length; i++) {
+    shapes[i].update(dt);
+  }
+  this.last_update = now;
+}
+
 CanvasState.prototype.draw = function() {
   // if our state is invalid, redraw and validate!
-  if (!this.valid) {
-    var ctx = this.ctx;
-    var shapes = this.shapes;
-    this.clear();
-    
-    // ** Add stuff you want drawn in the background all the time here **
-    
-    // draw all shapes
-    var l = shapes.length;
-    for (var i = 0; i < l; i++) {
-      var shape = shapes[i];
-      // We can skip the drawing of elements that have moved off the screen:
-      if (shape.x > this.width || shape.y > this.height ||
-          shape.x + shape.w < 0 || shape.y + shape.h < 0) continue;
-      shapes[i].draw(ctx);
-    }
-    
-    // ** Add stuff you want drawn on top all the time here **
-    
-    this.valid = true;
+  var ctx = this.ctx;
+  var shapes = this.shapes;
+  this.clear();
+  
+  // ** Add stuff you want drawn in the background all the time here **
+  
+  // draw all shapes
+  var l = shapes.length;
+  for (var i = 0; i < l; i++) {
+    var shape = shapes[i];
+    // We can skip the drawing of elements that have moved off the screen:
+    if (shape.x > this.width || shape.y > this.height ||
+        shape.x + shape.w < 0 || shape.y + shape.h < 0) continue;
+    shapes[i].draw(ctx);
   }
+  
+  // ** Add stuff you want drawn on top all the time here **
+  
+  this.valid = true;
 }

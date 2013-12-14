@@ -8,17 +8,12 @@ function Shape(x,y,w,h,color) {
     this.y = y || 0;
     this.w = w || 1;
     this.h = h || 1;
-    this.color = color;
+    this.color = typeof color == "string" ? color : RGBA(color);
 }
 
-Object.defineProperty(Shape.prototype, 'fill', {
-    get: function() {
-        return RGBA(this.color);
-    }
-});
-
 Shape.prototype.draw = function(ctx) {
-    ctx.fillStyle = this.fill;
+    console.log(this);
+    ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.w, this.h);
 }
 
@@ -112,7 +107,7 @@ var r = 128, g = 128, b = 32, a = 0.9;
 var controlled_shape = new Shape(
   (500 - initial_width) / 2, 
   (500 - initial_height) / 2, 
-  initial_width, initial_height, r, g, b, a);
+  initial_width, initial_height, [r, g, b, a]);
 
 init();
 

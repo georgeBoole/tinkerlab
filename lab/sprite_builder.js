@@ -51,6 +51,33 @@ function init_gui() {
 	return sprite_builder;
 }
 
+var shape_gui_map = {};
+
+function select(shape) {
+	// initialize a gui for it
+	var shape_gui = new dat.GUI();
+	for (var key in shape) {
+		if (shape.hasOwnProperty(key)) {
+			if (key == "color") {
+				continue; // wait until end for color
+			}
+			shape_gui.add(shape, key);
+		}
+	}
+	shape_gui.addColor(shape, 'color');
+	shape_gui_map[shape] = shape_gui;
+}
+
+function deselect(shape) {
+	if (shape in shape_gui_map) {
+		shape_gui = shape_gui_map[shape];
+		if (shape_gui) {
+			shape_gui.destroy();
+			delete(shape_gui_map[shape]);
+		}
+	}
+}
+
 function init_input(sprite_builder_gui) {
 	var myState = window.canvasState;
 	var canvas = myState.canvas;
@@ -68,13 +95,14 @@ function init_input(sprite_builder_gui) {
 				myState.dragoffy = my - mySel.y;
 				myState.dragging = true;
 				myState.selection = mySel;
-				console.log('selected stuff');
+				select(mySel);
 				return;
 			}
 		}
 		// havent returned means we have failed to select anything.
 		// If there was an object selected, we deselect it
 		if (myState.selection) {
+			deselect(myState.selection);
 			myState.selection = null;
 		}
 	}, true);

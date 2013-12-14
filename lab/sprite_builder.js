@@ -27,24 +27,20 @@ function init() {
     var cvs = s.canvas;
     cvs.addEventListener('dblclick', function(e) {
       var mouse = {x:e['offsetX'], y:e['offsetY']};
-      console.log('got mouse:');
-      console.log(mouse);
-      console.log('event');
-      console.log(e);
-      var color = 'rgba(32, 32, 128, 0.6)';
+      var col = function() { return String(Math.floor(Math.random() * 255)); };
+      var color = 'rgba(' + col() + ',' + col() + ',' + col() + ', ' + String(.70 + .30 * Math.random()) + ')';
+      console.log(color);
       var shape = undefined;
       if (gui_state['brush'] == 'rectangle') {
-      	shape = new Rect(mouse.x - 10, mouse.y - 10, 20, 20, color);
+      	shape = new Rect(mouse.x - 40, mouse.y - 40, 80, 80, color);
       }
       else if (gui_state['brush'] == 'triangle') {
-        shape = new Triangle(mouse.x - 10, mouse.y, mouse.x + 10, mouse.y, mouse.x, mouse.y + 25);
-        shape.fill = color;
+        shape = new Triangle(mouse.x - 40, mouse.y, mouse.x + 40, mouse.y, mouse.x, mouse.y + 55, color);
       }
       else if (gui_state['brush'] == 'circle') {
-      	shape = new Circle(mouse.x, mouse.y, 20, color);
+      	shape = new Circle(mouse.x, mouse.y, 30, color);
       }
       if (shape != undefined) {
-      	console.log('Creating new ' + gui_state['brush'] + ' shape');
       	s.addShape(shape);
       }
     }, true);

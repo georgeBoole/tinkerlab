@@ -5,9 +5,16 @@ var config = {
 	height: 800
 }
 
-function SpriteBuild() {
-	this.name = "Sprite.json";
-	this.layers = [];
+var sprite_build = {
+	name: 'sprite',
+	width: config.width,
+	height: config.height,
+	objects: []
+}
+
+var gui_state = {
+	brush: "rectangle" // Circle, Triangle
+
 }
 
 init();
@@ -17,6 +24,26 @@ function init() {
     window.canvasState = s;
 
     var cvs = s.canvas;
+    cvs.addEventListener('dblclick', function(e) {
+      var mouse = myState.getMouse(e);
+      var color = 'rgba(32, 32, 128, 0.6)';
+      var shape = undefined;
+      if (gui_state['brush'] == 'rectangle') {
+      	shape = new Rect(mouse.x - 10, mouse.y - 10, 20, 20, color);
+      }
+      else if (gui_state['brush'] == 'triangle') {
+        shape = new Triangle(mouse.x - 10, mouse.y, mouse.x + 10, mouse.y, mouse.x, mouse.y + 25);
+        shape.fill = color;
+      }
+      else if (gui_state['brush'] == 'circle') {
+      	shape = new Circle(mouse.x, mouse.y, 20, color);
+      }
+      if (shape != undefined) {
+      	console.log('Creating new ' + gui_state['brush'] + ' shape');
+      	s.addShape(shape);
+      }
+    }, true);
+    
     
 }
 
@@ -41,11 +68,18 @@ function init_gui() {
 	var sprite_builder = new dat.GUI();
 	var sprite = new SpriteBuild();
 	sprite_builder.add(sprite, 'name');
+	sprite_builder.add(gui_state, 'brush', {'Triangle':'triangle', 'Rectangle':'rectangle', 'Circle':'circle'}).name('Brush');
 
+	cvs.addEventListener('dblclick', function(e) {
+      var mouse = myState.getMouse(e);
+      s.addShape(new )
+      //myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, 20, 20, 'rgba(0,255,0,.6)'));
+    }, true);
 
 }
 
 window.onload = function() {
 	init_gui();
+	init_input();
 };
 

@@ -11,6 +11,7 @@ function CanvasState(canvas) {
     this.dragoffy = 0;
     this.last_update = Date.now();
     var myState = this;
+
     setInterval(function() { myState.update(); myState.draw(); }, myState.interval);
 }
 
@@ -20,6 +21,31 @@ CanvasState.prototype.addShape = function(shape) {
 
 CanvasState.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.width, this.height);
+}
+
+// Creates an object with x and y defined, set to the mouse position relative to the state's canvas
+// If you wanna be super-correct this can be tricky, we have to worry about padding and borders
+CanvasState.prototype.getMouse = function(e) {
+  var element = this.canvas, offsetX = 0, offsetY = 0, mx, my;
+  
+  // Compute the total offset
+  if (element.offsetParent !== undefined) {
+    do {
+      offsetX += element.offsetLeft;
+      offsetY += element.offsetTop;
+    } while ((element = element.offsetParent));
+  }
+
+  // Add padding and border style widths to offset
+  // Also add the <html> offsets in case there's a position:fixed bar
+  offsetX += this.stylePaddingLeft + this.styleBorderLeft + this.htmlLeft;
+  offsetY += this.stylePaddingTop + this.styleBorderTop + this.htmlTop;
+
+  mx = e.pageX - offsetX;
+  my = e.pageY - offsetY;
+  
+  // We return a simple javascript object (a hash) with x and y defined
+  return {x: mx, y: my};
 }
 
 CanvasState.prototype.update = function() {
@@ -43,7 +69,7 @@ CanvasState.prototype.draw = function() {
   // ** Add stuff you want drawn in the background all the time here **
   ctx.fillStyle = this.bgcolor;
   ctx.fillRect(0, 0, this.width, this.height);
-  
+
   // draw all shapes
   var l = shapes.length;
   for (var i = 0; i < l; i++) {

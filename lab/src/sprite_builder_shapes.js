@@ -3,16 +3,27 @@ function RGBA(color) {
     return 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + color[3] + ')';
 }
 
-function Rect(x,y,w,h,color) {
+function Rect(x,y,w,h,color,orientation) {
     this.x = x || 0;
     this.y = y || 0;
     this.w = w || 1;
     this.h = h || 1;
+    this._orientation = orientation || 0;
     this.color = typeof color == "string" ? color : RGBA(color);
 }
 
+Object.defineProperty(Rect.prototype, 'orientation', {
+  get: function() {
+    return this._orientation * (180/Math.PI);
+  },
+  set: function(value) {
+    this._orientation = value % 2*Math.PI;
+  }
+});
+
 Rect.prototype.draw = function(ctx) {
     ctx.fillStyle = this.color;
+    //ctx.rotate(this.orientation);
     ctx.fillRect(this.x, this.y, this.w, this.h);
 }
 
@@ -48,7 +59,7 @@ Circle.prototype.contains = function(px, py) {
     return (Math.pow((px - this.x), 2) + Math.pow((py - this.y), 2)) <= this.r * this.r;
 }
 
-function Triangle(ax, ay, bx, by, cx, cy, color) {
+function Triangle(ax, ay, bx, by, cx, cy, color, orientation) {
     this.x = Math.min(ax, bx, cx);
     this.y = Math.min(ay, by, cy);
     this.ax = ax;
@@ -57,12 +68,23 @@ function Triangle(ax, ay, bx, by, cx, cy, color) {
     this.by = by;
     this.cx = cx;
     this.cy = cy;
+    this.orientation = orientation || 0;
     this.color = color;
 }
+
+Object.defineProperty(Triangle.prototype, 'orientation', {
+  get: function() {
+    return this._orientation * (180/Math.PI);
+  },
+  set: function(value) {
+    this._orientation = value % 2*Math.PI;
+  }
+});
 
 Triangle.prototype.draw = function(ctx) {
     ctx.beginPath();
     ctx.fillStyle = this.color;
+    //ctx.rotate(this.orientation);
     ctx.moveTo(this.ax,this.ay);
     ctx.lineTo(this.bx,this.by);
     ctx.lineTo(this.cx,this.cy);
@@ -88,17 +110,29 @@ Triangle.prototype.contains = function(x, y) {
     return ((b1 == b2) && (b2 == b3));
 }
 
-function QuadCurve(x,y,cp1x,cp1y,cp2x,cp2y,color) {
+function QuadCurve(x,y,cp1x,cp1y,cp2x,cp2y,color,orientation) {
     this.x = x;
     this.y = y;
     this.cp1x = cp1x;
     this.cp1y = cp1y;
     this.cp2x = cp2x;
     this.cp2y = cp2y;
+    this.orientation = orientation || 0;
     this.color = color;
 }
+
+Object.defineProperty(QuadCurve.prototype, 'orientation', {
+  get: function() {
+    return this._orientation * (180/Math.PI);
+  },
+  set: function(value) {
+    this._orientation = value % 2*Math.PI;
+  }
+});
+
 QuadCurve.prototype.draw = function(ctx) {
     ctx.strokeStyle = this.color;
+    //ctx.rotate(this.orientation);
     ctx.moveTo(x,y);
     ctx.quadraticCurveTo(cp1x,cp1y,cp2x,cp2y);
     ctx.stroke();

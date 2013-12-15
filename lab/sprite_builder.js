@@ -13,14 +13,24 @@ var sprite_build = {
 }
 
 var gui_state = {
-	brush: "rectangle" // Circle, Triangle
-
+	brush: "rectangle", // Circle, Triangle
+	app_gui: undefined
 }
 
+dat.GUI.prototype.removeFolder = function(name) {
+	this.__folders[name].close();
+	if (this.__folders[name].ul) {
+		this.__ul.removeChild(this.__folders[name].ul);
+		dom.removeClass(this.__folders[name].ul, 'folder');
+	}
+	this.__folders[name] = undefined;
+	this.onResize();
+}
 init();
 
 function init() {
     var s = new CanvasState(document.getElementById('canvas'));
+    try { var isFileSaverSupported = !!new Blob(); } catch(e){ alert('Unable to save files on this browser'); }
     window.canvasState = s;
     window.shapes = s.shapes;
     
@@ -29,7 +39,7 @@ function init() {
 function init_gui() {
 	// display the general app config panel
 	var app_config = new dat.GUI();
-
+	gui_state['app_gui'] = app_config;
 	var canvas_config = app_config.addFolder('Canvas');
 	var cs = window.canvasState;
 	canvas_config.add(config, 'width').name('Width').onFinishChange(function(new_value) {
@@ -41,10 +51,9 @@ function init_gui() {
 	canvas_config.addColor(config, 'bgcolor').name('BG Color').onChange(function(new_color) {
 		window.canvasState.bgcolor = new_color;
 	});
-	canvas_config.open();
 
-	// display the sprite creation management panel
-	var sprite_builder = new dat.GUI();
+	// display the sprite creation management panels
+	var sprite_builder = app_config.addFolder('Sprite');
 	sprite_builder.add(sprite_build, 'name');
 	sprite_builder.add(gui_state, 'brush', {'Triangle':'triangle', 'Rectangle':'rectangle', 'Circle':'circle'}).name('Brush');
 
@@ -61,7 +70,12 @@ function select(shape) {
 			if (key == "color") {
 				continue; // wait until end for color
 			}
-			shape_gui.add(shape, key);
+			if ((shape instanceof Triangle) && (key == 'x' || key == 'y')) {
+				shape_gui.add(shape, key).listen();
+			}
+			else {
+				shape_gui.add(shape, key);
+			}
 		}
 	}
 	shape_gui.addColor(shape, 'color');
@@ -138,6 +152,10 @@ function init_input(sprite_builder_gui) {
     		console.log('Changed brush to ' + state_map[keycode]);
     	}
     });
+}
+
+function save(name, shapes) {
+
 }
 
 window.onload = function() {

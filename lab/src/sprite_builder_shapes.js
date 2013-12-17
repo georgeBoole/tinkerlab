@@ -22,9 +22,11 @@ Object.defineProperty(Rect.prototype, 'orientation', {
 });
 
 Rect.prototype.draw = function(ctx) {
+  ctx.save();
     ctx.fillStyle = this.color;
     //ctx.rotate(this.orientation);
     ctx.fillRect(this.x, this.y, this.w, this.h);
+    ctx.restore();
 }
 
 Rect.prototype.update = function(dt) {
@@ -42,21 +44,6 @@ function Circle(x,y,r,color) {
     this.h = 2 * r;
     this.r = r;
     this.color = typeof color == "string" ? color : RGBA(color);
-}
-
-Circle.prototype.draw = function(ctx) {
-    ctx.beginPath();
-    ctx.fillStyle = this.fill;
-    ctx.arc(this.x,this.y,this.r,0,2 * Math.PI);
-    ctx.fill();
-}
-
-Circle.prototype.update = function(dt) {
-
-}
-
-Circle.prototype.contains = function(px, py) {
-    return (Math.pow((px - this.x), 2) + Math.pow((py - this.y), 2)) <= this.r * this.r;
 }
 
 function Triangle(ax, ay, bx, by, cx, cy, color, orientation) {
@@ -82,6 +69,7 @@ Object.defineProperty(Triangle.prototype, 'orientation', {
 });
 
 Triangle.prototype.draw = function(ctx) {
+  ctx.save();
     ctx.beginPath();
     ctx.fillStyle = this.color;
     //ctx.rotate(this.orientation);
@@ -90,6 +78,7 @@ Triangle.prototype.draw = function(ctx) {
     ctx.lineTo(this.cx,this.cy);
     ctx.closePath();
     ctx.fill();
+  ctx.restore();
 }
 
 Triangle.prototype.update = function(dt) {

@@ -54,10 +54,6 @@ function init_gui() {
 var shape_gui_map = {};
 
 function select(shape) {
-	// initialize a gui for it
-  console.log('selecting');
-  console.log(shape);
-  if (!(shape in shape_gui_map)) {
     console.log('Initializing a GUI for ');
     console.log(shape);
   	var shape_gui = new dat.GUI();
@@ -76,10 +72,6 @@ function select(shape) {
   	}
   	shape_gui.addColor(shape, 'color');
   	shape_gui_map[shape] = shape_gui;
-  }
-  else {
-    addGui(shape_gui_map[shape]);
-  }
 }
 
 function deselect(shape) {

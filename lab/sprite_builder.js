@@ -96,7 +96,9 @@ function deselect(shape) {
 function removeGui(gui, parent) {
   console.log('removing gui');
   console.log(gui);
-  $(gui.domElement).css("display", "none");
+  console.log(gui.domElement);
+  //$(gui.domElement).css("display", "none");
+  gui.domElement.parentNode.removeChild(gui.domElement);
   //$(gui.domElement).hide();
   //parent.removeChild(gui.domElement);
 }

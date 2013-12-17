@@ -3,18 +3,6 @@ function RGBA(color) {
     return 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + color[3] + ')';
 }
 
-// int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
-// {
-//   int i, j, c = 0;
-//   for (i = 0, j = nvert-1; i < nvert; j = i++) {
-//     if ( ((verty[i]>testy) != (verty[j]>testy)) &&
-//      (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
-//        c = !c;
-//   }
-//   return c;
-// }
-
-
 var Vector = Base.extend({
   constructor: function(x, y) {
     this.x = x;

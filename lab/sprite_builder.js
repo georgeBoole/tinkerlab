@@ -17,15 +17,6 @@ var gui_state = {
 	app_gui: undefined
 }
 
-dat.GUI.prototype.removeFolder = function(name) {
-	this.__folders[name].close();
-	if (this.__folders[name].ul) {
-		this.__ul.removeChild(this.__folders[name].ul);
-		dom.removeClass(this.__folders[name].ul, 'folder');
-	}
-	this.__folders[name] = undefined;
-	this.onResize();
-}
 init();
 
 function init() {
@@ -64,32 +55,55 @@ var shape_gui_map = {};
 
 function select(shape) {
 	// initialize a gui for it
-	var shape_gui = new dat.GUI();
-	for (var key in shape) {
-		if (shape.hasOwnProperty(key)) {
-			if (key == "color") {
-				continue; // wait until end for color
-			}
-			if ((shape instanceof Triangle) && (key == 'x' || key == 'y')) {
-				shape_gui.add(shape, key).listen();
-			}
-			else {
-				shape_gui.add(shape, key);
-			}
-		}
-	}
-	shape_gui.addColor(shape, 'color');
-	shape_gui_map[shape] = shape_gui;
+  console.log('selecting');
+  console.log(shape);
+  if (!(shape in shape_gui_map)) {
+    console.log('Initializing a GUI for ');
+    console.log(shape);
+  	var shape_gui = new dat.GUI();
+  	for (var key in shape) {
+  		if (shape.hasOwnProperty(key)) {
+  			if (key == "color") {
+  				continue; // wait until end for color
+  			}
+  			if ((shape instanceof Triangle) && (key == 'x' || key == 'y')) {
+  				shape_gui.add(shape, key).listen();
+  			}
+  			else {
+  				shape_gui.add(shape, key);
+  			}
+  		}
+  	}
+  	shape_gui.addColor(shape, 'color');
+  	shape_gui_map[shape] = shape_gui;
+  }
+  else {
+    addGui(shape_gui_map[shape]);
+  }
 }
 
 function deselect(shape) {
+  console.log('deselecting');
+  console.log(shape);
 	if (shape in shape_gui_map) {
 		shape_gui = shape_gui_map[shape];
 		if (shape_gui) {
-			shape_gui.destroy();
-			delete(shape_gui_map[shape]);
-		}
+			removeGui(shape_gui);
+    }
 	}
+}
+
+function removeGui(gui, parent) {
+  console.log('removing gui');
+  console.log(gui);
+  $(gui.domElement).css("display", "none");
+  //$(gui.domElement).hide();
+  //parent.removeChild(gui.domElement);
+}
+
+function addGui(gui, parent) {
+  //$(gui.domElement).css("display", "block");
+  $(gui.domElement).show();
 }
 
 function init_input(sprite_builder_gui) {
@@ -108,6 +122,9 @@ function init_input(sprite_builder_gui) {
 				myState.dragoffx = mx - mySel.x;
 				myState.dragoffy = my - mySel.y;
 				myState.dragging = true;
+        if (myState.selection) {
+          deselect(myState.selection);
+        }
 				myState.selection = mySel;
 				select(mySel);
 				return;

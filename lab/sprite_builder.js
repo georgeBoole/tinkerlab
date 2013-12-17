@@ -131,7 +131,31 @@ function init_input(sprite_builder_gui) {
 			myState.selection = null;
 		}
 	}, true);
-
+  canvas.addEventListener('mousemove', function(e) {
+    if (myState.dragging){
+      var mouse = {x:e['offsetX'], y:e['offsetY']};
+      // We don't want to drag the object by its top-left corner, we want to drag it
+      // from where we clicked. Thats why we saved the offset and use it here
+      
+      if (myState.selection instanceof Triangle) {
+        var t = myState.selection;
+        var dx = myState.dragoffx, dy = myState.dragoffy;
+        myState.selection.ax = mouse.x - dx;
+        myState.selection.bx = mouse.x - dx;
+        myState.selection.cx = mouse.x - dx;
+        myState.selection.ay = mouse.y - dy;
+        myState.selection.by = mouse.y - dy;
+        myState.selection.cy = mouse.y - dy;
+      }
+      else {
+        myState.selection.x = mouse.x - myState.dragoffx;
+        myState.selection.y = mouse.y - myState.dragoffy;
+      }
+    }
+  }, true);
+  canvas.addEventListener('mouseup', function(e) {
+    myState.dragging = false;
+  }, true);
 	var cvs = myState.canvas;
     cvs.addEventListener('dblclick', function(e) {
       var mouse = {x:e['offsetX'], y:e['offsetY']};

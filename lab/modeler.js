@@ -11,6 +11,7 @@ var SpriteCanvas = Base.extend({
 		this.dragoffy = 0;
 		this.interval = 1000 / 60;
 		this.bgColor = '#000000';
+		this.name = 'sprite1';
 		var self = this;
 		setInterval(function() { self.update(); self.draw(); }, this.interval);
 	},
@@ -36,13 +37,13 @@ var SpriteCanvas = Base.extend({
 
 });
 
-function init(workspace, file) {
-
+function initGUI(spriteCanvas) {
 	var mainGUI = new dat.GUI();
 	var workspaceGUI = mainGUI.addFolder('Workspace');
-	workspaceGUI.add(workspace, 'width').max(workspace['width']);
-	workspaceGUI.add(workspace, 'height').max(workspace['height']);
-	workspaceGUI.addColor(workspace, 'bgcolor');
+	var cvs = spriteCanvas.canvas;
+	workspaceGUI.add(cvs, 'width').max(cvs.width);
+	workspaceGUI.add(cvs, 'height').max(cvs.height);
+	workspaceGUI.addColor(spriteCanvas, 'bgColor');
 
 	var toolGUI = mainGUI.addFolder('Tools');
 	var tools = {
@@ -65,19 +66,21 @@ function init(workspace, file) {
 	toolGUI.add(tools, 'custom');
 
 	var fileGUI = mainGUI.addFolder('File');
-	fileGUI.add(file, 'name');
+	fileGUI.add(spriteCanvas, 'name');
+}
 
+function initInput(spriteCanvas) {
+	var cvs = spriteCanvas.canvas;
+}
+
+function init() {
+
+	var spriteCanvas = new SpriteCanvas();
+	initGUI(spriteCanvas);
+	initInput(spriteCanvas);
 
 }
 
 window.onload = function() {
-	var workspace = {
-		width: $("#canvas")[0].width,
-		height: $("#canvas")[0].height,
-		bgcolor: "#000000"
-	};
-	var file = {
-		name: 'sprite1'
-	};
-	init(workspace, file);
+	init();
 }

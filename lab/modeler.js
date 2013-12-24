@@ -1,4 +1,5 @@
 
+var mouse = function(e) { return {x: e.offsetX, y: e.offsetY }; };
 
 var SpriteCanvas = Base.extend({
 	constructor: function() {
@@ -71,6 +72,63 @@ function initGUI(spriteCanvas) {
 
 function initInput(spriteCanvas) {
 	var cvs = spriteCanvas.canvas;
+	var gfx = spriteCanvas.graphics;
+	var sc = spriteCanvas;
+
+	var events = ['selectstart', 'mousedown', 'mousemove', 'mouseup', 'dblclick'];
+	var useCapture = [false, true, true, true, true];
+
+	var selectstart = function(e) {
+		e.preventDefault(); 
+		return false;
+	};
+
+	var mousedown = function(e) {
+		var m = mouse(e);
+		for (var i = 0; i < gfx.length; i++) {
+			if (gfx[i].contains(m.x, m.y)) {
+				var selection = gfx[i];
+				sc.dragoffx = m.x - selection.x;
+				sc.dragoffy = m.y - selection.y;
+				sc.dragging = true;
+				if (sc.selection) {
+					deselect(sc.selection);
+				}
+				sc.selection = selection;
+				select(selection);
+				return;
+			}
+		}
+	};
+
+	var mousemove = function(e) {
+		if (sc.dragging) {
+			var m = mouse(e);
+			if (sc.selection) {
+				var s = sc.selection;
+				s.x = m.x - sc.dragoffx;
+				s.y = m.y - sc.dragoffy;
+			}
+		}
+	};
+
+	var mouseup = function(e) {
+		sc.dragging = false;
+	};
+
+	var dblclick = function(e) {
+		var m = mouse(e);
+		// make a shape
+	};
+
+	for (var i = 0; i < events.length; i++) {
+		try {
+			cvs.addEventListener(events[i], eval(events[i]), useCapture[i]);
+		}
+		catch(err) {
+			console.log('No implementation of event listener for ' + events[i]);
+		}
+	}
 }
 
 function init() {

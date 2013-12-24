@@ -1,17 +1,13 @@
 
 var _shape_counter = 0;
-
+var sqrt = Math.sqrt;
+var sq = function(x) { return Math.pow(x, 2); };
 
 var Shape = Base.extend({
-  constructor: function(x,y,settings) {
+  constructor: function(x, y) {
     this.x = x;
     this.y = y;
     this.id = _shape_counter++;
-    for (var key in settings) {
-    	if (settings.hasOwnProperty(key)) {
-    		this[key] = settings[key];
-    	}
-    }
   },
   update: function(dt) {
 
@@ -24,9 +20,17 @@ var Shape = Base.extend({
   }
 });
 
-var Circle = Shape.extend({
-  constructor: function(x,y,id,label,fill,stroke,radius) {
-    this.base(x,y,id,label,fill,stroke,radius);
+var ColorShape = Shape.extend({
+	constructor: function(x, y, fill, stroke) {
+		this.base(x, y);
+		this.fill = fill;
+		this.stroke = stroke;
+	}
+});
+
+var Circle = ColorShape.extend({
+  constructor: function(x, y, fill, stroke, radius) {
+    this.base(x,y, fill, stroke);
     this.radius = radius;
   },
   draw: function(ctx) {
@@ -38,13 +42,13 @@ var Circle = Shape.extend({
     ctx.restore();
   },
   contains: function(px, py) {
-    return (Math.pow((px - this.x), 2) + Math.pow((py - this.y), 2)) <= this.radius * this.radius;
+  	return (sq(px - this.x) + sq(py - this.y)) <= sq(this.radius);
   }
 });
 
-var Polygon = Shape.extend({
-  constructor: function(x,y,id,label,color,stroke,vertices) {
-    this.base(x,y,id,label,color,stroke);
+var Polygon = ColorShape.extend({
+  constructor: function(x,y,fill, stroke, vertices) {
+    this.base(x,y, fill,stroke);
     this.vertices = vertices;
   },
   contains: function(mx, my) {

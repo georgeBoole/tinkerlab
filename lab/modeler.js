@@ -1,5 +1,44 @@
 
 var mouse = function(e) { return {x: e.offsetX, y: e.offsetY }; };
+var randInt = function(n) {
+	return Math.floor(Math.random() * n);
+};
+
+var randomColor = function() {
+	var r = randInt(256), g = randInt(256), b = randInt(256);
+	var a = Math.random() * 0.5 + 0.5;
+	return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+};
+
+var v = function(x, y) {
+	return {'x':x, 'y':y};
+}
+
+var Graphic = Base.extend({
+	constructor: function(name, shapes, zIndex) {
+		this.name = name;
+		this.shapes = shapes;
+		this.zIndex = zIndex;
+	},
+	update: function() {
+		for (var i = 0; i < this.shapes.length; i++) {
+			this.shapes[i].update();
+		}
+	},
+	draw: function(ctx) {
+		for (var i = 0; i < this.shapes.length; i++) {
+			this.shapes[i].draw(ctx);
+		}
+	},
+	contains: function(x, y) {
+		for (var i = 0; i < this.shapes.length; i++) {
+			if (this.shapes[i].contains(x,y)) {
+				return true;
+			}
+		}
+		return false;
+	}
+});
 
 var SpriteCanvas = Base.extend({
 	constructor: function() {
@@ -13,6 +52,7 @@ var SpriteCanvas = Base.extend({
 		this.interval = 1000 / 60;
 		this.bgColor = '#000000';
 		this.name = 'sprite1';
+		this.brush = 'circle'; // 'circle', 'rect', 'polygon', 'custom'
 		var self = this;
 		setInterval(function() { self.update(); self.draw(); }, this.interval);
 	},
@@ -32,9 +72,39 @@ var SpriteCanvas = Base.extend({
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		this.context.restore();
 	},
-	addGraphic: function(graphic) {
-		this.graphics.push(graphic);
-	}
+	addGraphic: function(x, y) {
+		// use the brush to figure out what shape being made
+		// make this shape[s] for the graphic
+		// add the graphic to the collection
+		var shapes = null;
+		if (this.brush == 'circle') {
+			shapes = [new Circle(x, y, randomColor(), randomColor(), randInt(80) + 40)];
+		}
+		else if (this.brush == 'rect') {
+			var width = randInt(80) + 40;
+			var height = randInt(80) + 40;
+			var vertices = [v(0, 0), v(width, 0), v(width, height), v(0, height)];
+			shapes = [new Polygon(x, y, randomColor(), randomColor(), vertices)];
+		}
+		else if (this.brush == 'polygon') {
+			var numSides = randInt(8) + 3;
+			var angle = (Math.PI * 2) / numSides;
+			var size = randInt(80) + 40;
+			var center = v(x + size/2, y + size/2);
+			vertices = [];
+			for (var i = 0; i < numSides; i++) {
+				vertices[i] = v((center.x - x) + size*Math.cos(angle * i), (center.y - y) + size*Math.sin(angle*i));
+			}
+			shapes = [new Polygon(x, y, randomColor(), randomColor(), vertices)];
+		}
+		else if (this.brush == 'custom') {
+			console.log('not supported');
+		}
+		if (shapes) {
+			var graphic = new Graphic(this.brush + shapes[0].id, shapes, 0);
+			this.graphics.push(graphic);
+		}
+	},
 
 });
 
@@ -49,16 +119,16 @@ function initGUI(spriteCanvas) {
 	var toolGUI = mainGUI.addFolder('Tools');
 	var tools = {
 		circle: function() {
-
+			spriteCanvas.brush = 'circle';
 		},
 		rect: function() {
-
+			spriteCanvas.brush = 'rect';
 		},
 		polygon: function() {
-
+			spriteCanvas.brush = 'polygon';
 		},
 		custom: function() {
-
+			spriteCanvas.brush = 'custom';
 		}
 	};
 	toolGUI.add(tools, 'circle');
@@ -118,7 +188,7 @@ function initInput(spriteCanvas) {
 
 	var dblclick = function(e) {
 		var m = mouse(e);
-		// make a shape
+		sc.addGraphic(m.x, m.y);
 	};
 
 	for (var i = 0; i < events.length; i++) {

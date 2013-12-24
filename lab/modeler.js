@@ -19,6 +19,16 @@ var Graphic = Base.extend({
 		this.name = name;
 		this.shapes = shapes;
 		this.zIndex = zIndex;
+		var gui = new dat.GUI();
+		if (this.shapes.length == 1) {
+			var s = this.shapes[0];
+			gui.add(s, 'x');
+			gui.add(s, 'y');
+			gui.add(s, 'orientation');
+			gui.addColor(s, 'fill');
+			gui.addColor(s, 'stroke');
+		}
+		gui.add(this, 'zIndex');
 	},
 	update: function() {
 		for (var i = 0; i < this.shapes.length; i++) {
@@ -57,6 +67,9 @@ var SpriteCanvas = Base.extend({
 		setInterval(function() { self.update(); self.draw(); }, this.interval);
 	},
 	update: function() {
+		for (var i = 0; i < this.graphics.length; i++) {
+			this.graphics[i].update(0);
+		}
 	},
 	draw: function() {
 		this.drawBackground();
@@ -73,27 +86,16 @@ var SpriteCanvas = Base.extend({
 		this.context.restore();
 	},
 	addGraphic: function(x, y) {
-		// use the brush to figure out what shape being made
-		// make this shape[s] for the graphic
-		// add the graphic to the collection
 		var shapes = null;
-		if (this.brush == 'circle') {
-			shapes = [new Circle(x, y, randomColor(), randomColor(), randInt(80) + 40)];
-		}
-		else if (this.brush == 'rect') {
-			var width = randInt(80) + 40;
-			var height = randInt(80) + 40;
-			var vertices = [v(0, 0), v(width, 0), v(width, height), v(0, height)];
-			shapes = [new Polygon(x, y, randomColor(), randomColor(), vertices)];
-		}
-		else if (this.brush == 'polygon') {
-			var numSides = randInt(8) + 3;
+		if (this.brush == 'polygon' || this.brush == 'circle' || this.brush == 'rect') {
+			var numSides = this.brush == 'polygon' ? randInt(8) + 3 : 40;
+			var numSides = this.brush == 'rect' ? 4 : numSides;
 			var angle = (Math.PI * 2) / numSides;
 			var size = randInt(80) + 40;
-			var center = v(x + size/2, y + size/2);
+			var center = v(x + size, y + size);
 			vertices = [];
 			for (var i = 0; i < numSides; i++) {
-				vertices[i] = v((center.x - x) + size*Math.cos(angle * i), (center.y - y) + size*Math.sin(angle*i));
+				vertices[i] = v((center.x - x) + size*Math.cos(angle * i + Math.PI/4), (center.y - y) + size*Math.sin(angle*i + Math.PI/4));
 			}
 			shapes = [new Polygon(x, y, randomColor(), randomColor(), vertices)];
 		}
@@ -107,6 +109,14 @@ var SpriteCanvas = Base.extend({
 	},
 
 });
+
+var select = function(graphic) {
+
+};
+
+var deselect = function(graphic) {
+
+};
 
 function initGUI(spriteCanvas) {
 	var mainGUI = new dat.GUI();

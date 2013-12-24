@@ -50,6 +50,8 @@ var Polygon = ColorShape.extend({
   constructor: function(x,y,fill, stroke, vertices) {
     this.base(x,y, fill,stroke);
     this.vertices = vertices;
+    this.orientation = 0;
+    this.currentOrientation = 0;
   },
   contains: function(mx, my) {
     var self = this;
@@ -64,6 +66,31 @@ var Polygon = ColorShape.extend({
     }
     return c;
   },
+  update: function(dt) {
+  	if (Math.abs(this.currentOrientation - this.orientation) > 0.001) {
+  		var rotation = (this.orientation - this.currentOrientation) % (Math.PI * 2);
+  		// get center of polygon
+  		var maxX = Number.MIN_VALUE, maxY = Number.MIN_VALUE;
+  		for (var i = 0; i < this.vertices.length; i++) {
+  			if (this.vertices[i].x > maxX) maxX = this.vertices[i].x;
+  			if (this.vertices[i].y > maxY) maxY = this.vertices[i].y;
+  		}
+  		var center = v(maxX/2, maxY/2);
+  		for (var i = 0; i < this.vertices.length; i++) {
+  			var vt = this.vertices[i];
+  			// adjust it to be relative to the center
+  			var adjusted = v(vt.x - center.x, vt.y - center.y);
+  			// rotate the adjusted
+  			var cost = Math.cos(rotation);
+  			var sint = Math.sin(rotation);
+  			var newX = adjusted.x * cost - adjusted.y * sint;
+  			var newY = adjusted.x * sint + adjusted.y * cost;
+  			var newVert = v(newX + center.x, newY + center.y);
+  			this.vertices[i] = newVert;
+  		}
+  		this.currentOrientation = this.orientation;
+  	}
+  },
   draw: function(ctx) {
     ctx.save();
     ctx.fillStyle = this.fill;
@@ -75,6 +102,14 @@ var Polygon = ColorShape.extend({
     }
     ctx.closePath();
     ctx.fill();
+    // var maxX = Number.MIN_VALUE, maxY = Number.MIN_VALUE;
+  		// for (var i = 0; i < this.vertices.length; i++) {
+  		// 	if (this.vertices[i].x > maxX) maxX = this.vertices[i].x;
+  		// 	if (this.vertices[i].y > maxY) maxY = this.vertices[i].y;
+  		// }
+  		
+    // ctx.fillStyle = "rgba(255,255,255,0.4)";
+    // ctx.fillRect(this.x, this.y, maxX, maxY);
     ctx.restore();
   }
 });
